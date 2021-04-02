@@ -88,7 +88,7 @@ class DbManager:
     def fetchall(self, sql, params=None):
         res = self.execute(sql, params)
         if not res:
-            # logger.info("查询失败")
+            print("查询失败")
             return False
         # self.close()
         results = self.cur.fetchall()
@@ -99,7 +99,7 @@ class DbManager:
     def fetchone(self, sql, params=None):
         res = self.execute(sql, params)
         if not res:
-            # logger.info("查询失败")
+            print("查询失败")
             return False
         # self.close()
         result = self.cur.fetchone()
@@ -153,8 +153,6 @@ class Dbtools():
 
         if condition is not None:
             sql+=" "+condition
-
-        print(sql)
 
         res=self.db.fetchall(sql)
         final=[]

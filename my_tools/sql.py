@@ -127,7 +127,14 @@ class Dbtools():
         table_name=self.db.fetchall(sql)
 
         file_path=os.path.join(target_dir,f"{self.db_name}.py")
+        init_file=os.path.join(target_dir,"__init__.py")
 
+        # build __init__.py file
+        if len(target_dir)>0 and ( not os.path.exists(init_file) or recover ):
+            with open(init_file,"w") as f:
+                f.writelines("\n")
+
+        # build {db_name}.py file
         if not os.path.exists(file_path) or recover:
             with open(file_path,"w") as f:
                 f.writelines("from dataclasses import dataclass\nfrom typing import Any\n\n")

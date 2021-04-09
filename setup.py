@@ -10,14 +10,16 @@ setup(
     author='hw',  # 作者
     version='0.1.0',  # 版本号
 
-    description="hw's personal python tools",  # 描述
+    description="hw personal python tools",  # 描述
     packages=find_packages(),
     python_requires='>=3.7',
     # 依赖包
     install_requires=[
         'numpy',
-        'opencv-python',
         'requests',
-        'pymysql',
     ],
+    extras_require={
+        "sql":["pymysql"],
+        "image":["opencv-python"],
+    }
 )

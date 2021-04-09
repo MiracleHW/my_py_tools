@@ -120,7 +120,12 @@ class DbManager:
 class Dbtools():
     def __init__(self,*args,**kargs):
         self.db=DbManager(*args,**kargs)
-        self.db_name=kargs["db"]
+        if "db" in kargs.keys():
+            self.set_db(kargs["db"])
+
+    def set_db(self,db_name):
+        sql=f"use {db_name}"
+        self.db.execute(sql)
 
     def build_table(self,target_dir="",recover=False):
         sql=f"select table_name from information_schema.tables where table_schema='{self.db_name}'"
@@ -159,7 +164,7 @@ class Dbtools():
         sql=f"select {select_str} from {ins.table_name}"
 
         if condition is not None:
-            sql+=" "+condition
+            sql+=" where "+condition
 
         res=self.db.fetchall(sql)
         final=[]
@@ -172,11 +177,18 @@ class Dbtools():
     def insert(self,data,condition=None):
         data_dict=asdict(data)
         data_keys=list(data_dict.keys())
+        data_keys=[x for x in data_keys if data_dict[x] is not None]
 
         insert_str=",".join([f"`{x}`" for x in data_keys])
         values=[data_dict[x] for x in data_keys]
 
         sql=f"insert into {data.table_name} ({insert_str}) values("+",".join(["%s"]*len(values))+")"
         if condition is not None:
-            sql+=" "+condition
+            sql+=" where "+condition
         return self.db.execute(sql,params=values)
+
+    def fetchall(self,sql,params=None):
+        return self.db.fetchall(sql,params)
+
+    def execute(self,sql,params=None):
+        return self.db.execute(sql,params)

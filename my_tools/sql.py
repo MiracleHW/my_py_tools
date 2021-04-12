@@ -187,6 +187,20 @@ class Dbtools():
             sql+=" where "+condition
         return self.db.execute(sql,params=values)
 
+    def update(self,data,condition=None):
+        data_dict=asdict(data)
+
+        data_keys = list(data_dict.keys())
+        data_keys = [x for x in data_keys if data_dict[x] is not None]
+
+        update_str = ",".join([f"{x}=%s" for x in data_keys])
+        values = [data_dict[x] for x in data_keys]
+        sql = f"update {data.table_name} set {update_str}"
+
+        if condition is not None:
+            sql+=" where "+condition
+        return self.db.execute(sql,params=values)
+
     def fetchall(self,sql,params=None):
         return self.db.fetchall(sql,params)
 

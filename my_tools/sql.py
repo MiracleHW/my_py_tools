@@ -125,6 +125,7 @@ class Dbtools():
 
     def set_db(self,db_name):
         sql=f"use {db_name}"
+        self.db_name=db_name
         self.db.execute(sql)
 
     def build_table(self,target_dir="",recover=False):
@@ -165,7 +166,7 @@ class Dbtools():
 
         if condition is not None:
             sql+=" where "+condition
-
+        print(sql)
         res=self.db.fetchall(sql)
         final=[]
         if res is not False:

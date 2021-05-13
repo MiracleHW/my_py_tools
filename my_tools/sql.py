@@ -155,7 +155,7 @@ class Dbtools():
                     f.writelines(f"    table_name='{t}'\n")
                     f.writelines(f"\n")
 
-    def select(self,table,condition=None):
+    def select(self,table,where=None,extra=None):
         ins=table()
         ins_dict=asdict(ins)
 
@@ -164,9 +164,12 @@ class Dbtools():
 
         sql=f"select {select_str} from {ins.table_name}"
 
-        if condition is not None:
-            sql+=" where "+condition
-        print(sql)
+        if where is not None:
+            sql+=" where "+where
+
+        if extra is not None:
+            sql+=" "+extra
+
         res=self.db.fetchall(sql)
         final=[]
         if res is not False:
@@ -175,7 +178,7 @@ class Dbtools():
                 final.append(table(**rdict))
         return final
 
-    def insert(self,data,condition=None):
+    def insert(self,data,return_id=False,where=None,extra=None):
         data_dict=asdict(data)
         data_keys=list(data_dict.keys())
         data_keys=[x for x in data_keys if data_dict[x] is not None]
@@ -184,9 +187,15 @@ class Dbtools():
         values=[data_dict[x] for x in data_keys]
 
         sql=f"insert into {data.table_name} ({insert_str}) values("+",".join(["%s"]*len(values))+")"
-        if condition is not None:
-            sql+=" where "+condition
-        return self.db.execute(sql,params=values)
+        if where is not None:
+            sql+=" where "+where
+        if extra is not None:
+            sql+=" "+extra
+
+        if return_id:
+            return self.db.get_id()
+        else:
+            return self.db.execute(sql,params=values)
 
     def update(self,data,condition=None):
         data_dict=asdict(data)

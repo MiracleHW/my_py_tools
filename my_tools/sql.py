@@ -155,7 +155,7 @@ class Dbtools():
                     f.writelines(f"    table_name='{t}'\n")
                     f.writelines(f"\n")
 
-    def select(self,table,where=None,extra=None):
+    def select(self,table,where=None,extra=None,debug=False):
         ins=table()
         ins_dict=asdict(ins)
 
@@ -170,6 +170,9 @@ class Dbtools():
         if extra is not None:
             sql+=" "+extra
 
+        if debug:
+            print("SqlTools:",sql)
+
         res=self.db.fetchall(sql)
         final=[]
         if res is not False:
@@ -178,7 +181,7 @@ class Dbtools():
                 final.append(table(**rdict))
         return final
 
-    def insert(self,data,return_id=False,where=None,extra=None):
+    def insert(self,data,return_id=False,where=None,extra=None,debug=False):
         data_dict=asdict(data)
         data_keys=list(data_dict.keys())
         data_keys=[x for x in data_keys if data_dict[x] is not None]
@@ -191,6 +194,8 @@ class Dbtools():
             sql+=" where "+where
         if extra is not None:
             sql+=" "+extra
+        if debug:
+            print("SqlTools:", sql)
 
         if return_id:
             return self.db.get_id()

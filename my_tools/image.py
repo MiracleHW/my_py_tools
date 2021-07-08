@@ -26,9 +26,14 @@ def UrlImageDecode(image_url,timeout=30):
     image_buffer=r.content
     return BufferImageDecode(image_buffer)
 
-def ImageHashCodeMD5(image):
+def ImageMD5Encode(image):
     rect,image_buffer=cv2.imencode(".jpg",image)
     md5_l = hashlib.md5()
     md5_l.update(image_buffer)
     md5 = md5_l.hexdigest()
     return md5
+
+def B64ImageEncode(image):
+    rect,image_buffer=cv2.imencode(".jpg",image)
+    b64=base64.b64encode(image_buffer)
+    return b64

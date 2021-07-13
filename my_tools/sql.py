@@ -182,7 +182,11 @@ class Dbtools():
         return final
 
     def insert(self,data,return_id=False,where=None,extra=None,debug=False):
-        data_dict=asdict(data)
+        if isinstance(data,dict):
+            data_dict=data
+        else:
+            data_dict=asdict(data)
+
         data_keys=list(data_dict.keys())
         data_keys=[x for x in data_keys if data_dict[x] is not None]
 
@@ -202,8 +206,11 @@ class Dbtools():
         else:
             return self.db.execute(sql,params=values)
 
-    def update(self,data,condition=None):
-        data_dict=asdict(data)
+    def update(self,data,where=None):
+        if isinstance(data,dict):
+            data_dict = data
+        else:
+            data_dict = asdict(data)
 
         data_keys = list(data_dict.keys())
         data_keys = [x for x in data_keys if data_dict[x] is not None]
@@ -212,8 +219,8 @@ class Dbtools():
         values = [data_dict[x] for x in data_keys]
         sql = f"update {data.table_name} set {update_str}"
 
-        if condition is not None:
-            sql+=" where "+condition
+        if where is not None:
+            sql+=" where "+where
         return self.db.execute(sql,params=values)
 
     def fetchall(self,sql,params=None):

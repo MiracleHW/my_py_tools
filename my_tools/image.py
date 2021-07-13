@@ -9,8 +9,8 @@ import base64
 import requests
 import hashlib
 
-__all__ = ["BufferImageDecode","B64ImageDecode","UrlImageDecode",
-           "ImageHashCodeMD5"]
+__all__ = ["BufferImageDecode","B64ImageDecode","UrlImageDecode","B64ImageEncode"
+           "ImageMD5Encode",]
 
 def BufferImageDecode(image_buffer):
     nparr = np.frombuffer(image_buffer, np.uint8)

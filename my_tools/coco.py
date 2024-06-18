@@ -1,5 +1,8 @@
 import json
 from pathlib import Path
+import warnings
+import random
+from copy import deepcopy
 
 
 class Coco:
@@ -48,7 +51,18 @@ class Coco:
             yield self.sample(im_id)
 
     def sample(self, id):
-        return self._image_id_dict[id], self._image_anno_dict[id] if id in self._image_anno_dict else []
+        return deepcopy(self._image_id_dict[id]), \
+            deepcopy(self._image_anno_dict[id]) if id in self._image_anno_dict else []
+
+    def random_sample(self, k):
+        images = self.images
+        if k > len(images):
+            warnings.warn(f"try to sample {k} from {len(images)} number data")
+            k = len(images)
+
+        images = random.sample(images, k=k)
+        for im_id, im_name in images:
+            yield self.sample(im_id)
 
     def update(self, categories=None, images=None, annotations=None):
         if categories is not None:

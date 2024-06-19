@@ -5,7 +5,7 @@ import random
 from copy import deepcopy
 
 
-class Coco:
+class COCO:
     def __init__(self, anno_file):
         with open(anno_file) as f:
             data = json.load(f)
@@ -44,15 +44,29 @@ class Coco:
         return [(x["id"], x["name"]) for x in self._categories]
 
     def __repr__(self):
-        return f"CoCoData of {self.anno_file}, with image size {len(self.images)} and annotation size {len(self.annotations)}"
+        return f"COCO Data of {self.anno_file}, with image size {len(self._images)} and annotation size {len(self._annotations)}"
 
     def __iter__(self):
         for im_id, name in self.images:
             yield self.sample(im_id)
+    
+    def __len__(self):
+        return len(self._images)
 
-    def sample(self, id):
-        return deepcopy(self._image_id_dict[id]), \
-            deepcopy(self._image_anno_dict[id]) if id in self._image_anno_dict else []
+    def sample(self, idx):
+        return deepcopy(self._image_id_dict[idx]), \
+            deepcopy(self._image_anno_dict[idx]) if idx in self._image_anno_dict else []
+
+    def clear_no_instance_image(self):
+        new_images = []
+        source_size = len(self._images)
+        for x in self._images:
+            im_id = x["id"]
+            if im_id in self._image_anno_dict:
+                new_images.append(x)
+        self.update(images=new_images)
+
+        print(f"clear no instance images, clear size {source_size} to {len(self._images)}")
 
     def random_sample(self, k):
         images = self.images
@@ -73,3 +87,24 @@ class Coco:
             self._annotations = annotations
 
         self.build_image_annotation_dict()
+
+    def save(self,save_dir,override=False):
+        save_path = Path(save_dir)
+        save_path = save_path / self.anno_file.name if save_path.is_dir() else save_path
+
+        if save_path.exists():
+            raise FileExistsError(f"{save_path} exists!")
+        
+        save_path.parent.mkdir(parents=True,exist_ok=True)
+        
+        with open(save_path,"w") as f:
+            json.dump({
+                "info":self._info,
+                "license":self._license,
+                "categories":self._categories,
+                "images":self._images,
+                "annotations":self._annotations,
+            },f)
+    
+    def save2yolo(self,save_dir,use_kpts=False,use_segment=False):
+        pass

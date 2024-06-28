@@ -6,18 +6,23 @@ from copy import deepcopy
 
 
 class COCO:
-    def __init__(self, anno_file):
-        with open(anno_file) as f:
-            data = json.load(f)
+    def __init__(self, anno_file = None):
+        if anno_file is not None:
+            with open(anno_file) as f:
+                data = json.load(f)
+            self._categories = data["categories"]
+            self._info = data["info"]
+            self._license = data["license"]
+            self._images = data["images"]
+            self._annotations = data["annotations"]
+        else:
+            self._categories = []
+            self._info = []
+            self._license = []
+            self._images = []
+            self._annotations = []
 
         self.anno_file = Path(anno_file)
-
-        self._categories = data["categories"]
-        self._info = data["info"]
-        self._license = data["license"]
-        self._images = data["images"]
-        self._annotations = data["annotations"]
-
         self.build_image_annotation_dict()
 
     def build_image_annotation_dict(self):
